@@ -106,9 +106,18 @@ curl -i http://127.0.0.1:5002/combine
 ```
 Expected behavior:
 - Service B returns HTTP 504
-- Timeout error is logged
+- A timeout error is logged
 - Service B remains responsive
 
 ## Screenshots of the Lab Results
-![Service a and Service b](1.png)
+### Case 1 Normal Operation
+### Both Service A and Service B are on
+![Both Service A and Service B are on](1.png)
 ![The result of Service B](2.png)
+### Case 2 Service A Failure
+### (Only Service A off)
+![The result of Service B](3.png)
+### Case 3 Timeout/Slow Dependency
+### (Both Service A on again)
+### Both Service A and Service B are on
+![The result of Service B](5.png)
