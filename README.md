@@ -94,10 +94,11 @@ Expected behavior:
 
 ### Case 3: Timeout / Slow Dependency
 Restart Service A.
-Modify Service B to call the slow endpoint:
+Modify the line of r = requests.get(f"{SERVICE_A_URL}/data", timeout=1.0) Service B to the following line to call the slow endpoint:
 ```bash
 requests.get("http://127.0.0.1:5001/slow", timeout=1.0)
 ```
+
 Call Service B again:
 ```bash
 curl -i http://127.0.0.1:5002/combine
