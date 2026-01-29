@@ -114,10 +114,11 @@ Expected behavior:
 ### Both Service A and Service B are on
 ![Both Service A and Service B are on](1.png)
 ![The result of Service B](2.png)
+
 ### Case 2 Service A Failure
 ### (Only Service A off)
 ![The result of Service B](3.png)
+
 ### Case 3 Timeout/Slow Dependency
 ### (Both Service A on again)
-### Both Service A and Service B are on
 ![The result of Service B](5.png)
