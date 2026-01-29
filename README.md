@@ -49,6 +49,7 @@ pip install flask requests
 python app.py
 ```
 Service A run on: http://127.0.0.1:5001
+
 Test Service A: curl http://127.0.0.1:5001/data
 
 ### Step 2: Start Service B (Consumer)
@@ -69,7 +70,8 @@ Test Service B: curl http://127.0.0.1:5002/combine
 ## Demonstrating Distributed System Behavior
 ### Case 1: Normal Operation
 with both services running:
-```curl - i http://127.0.0.1:5002/combine
+```bash
+curl - i http://127.0.0.1:5002/combine
 ```
 
 Expected behavior:
@@ -81,7 +83,8 @@ Expected behavior:
 Stop Service A using Ctrl + C.
 Call Service B again:
 
-```curl -i http://127.0.0.1:5002/combine
+```bash
+curl -i http://127.0.0.1:5002/combine
 ```
 Expected behavior:
 - Service B returns HTTP 503
@@ -92,13 +95,19 @@ Expected behavior:
 ### Case 3: Timeout / Slow Dependency
 Restart Service A.
 Modify Service B to call the slow endpoint:
-```requests.get("http://127.0.0.1:5001/slow", timeout=1.0)
+```bash
+requests.get("http://127.0.0.1:5001/slow", timeout=1.0)
 ```
 Call Service B again:
-```curl -i http://127.0.0.1:5002/combine
+```bash
+curl -i http://127.0.0.1:5002/combine
 
 ```
 Expected behavior:
 - Service B returns HTTP 504
 - Timeout error is logged
 - Service B remains responsive
+
+## Screenshots of the Lab Results
+![Service a and Service b](1.png)
+![The result of Service B](2.png)
