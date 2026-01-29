@@ -29,3 +29,23 @@ This system consists of two services:
 - Exposes its own HTTP API
 - Calls Service A over the network
 - Handles failures gracefully when Service A is unavailable or slow
+
+### Each Service:
+- Runs as a separate process
+- Listens on a different port
+- Communicates via HTTP network calls
+
+
+## How to run the Lab
+### Step 1: Start Service A (Provider)
+
+Open ##Terminal 1**:
+```bash
+cd week1-lab/service-a
+Python -m venv venv
+source venv/bin/activate (macOS)
+.\venv/Scripts\activate (Windows)
+pip install flask
+python app.py
+
+
