@@ -44,7 +44,7 @@ Open **Terminal 1**:
 cd week1-lab/service-a
 Python -m venv venv
 source venv/bin/activate (macOS)
-.\venv/Scripts\activate (Windows)
+.\venv\Scripts\activate (Windows)
 pip install flask requests
 python app.py
 ```
@@ -58,7 +58,7 @@ Open **Terminal 2 (must be separate from Service A)**
 cd week1-lab/service-b
 python -m venv venv
 source venv/bin/activate (macOS)
-.\venv/Scripts\activate (Windows)
+.\venv\Scripts\activate (Windows)
 pip install flask requests
 python app.py
 ```
@@ -109,6 +109,30 @@ Expected behavior:
 - A timeout error is logged
 - Service B remains responsive
 
+### Case 4: Connection is Refused
+Stop Service A completely by pressing Crtl + C
+
+Verify that nothing is listening on port 5001
+```bash
+netstat -ano | findstr :5001
+```
+Correct (connection refused state): It should show no output on the terminal.
+
+Prove Connection is Refused directly
+```bash
+curl http://127.0.0.1:5001/health
+```
+
+Call the Service B
+```bash
+curl -i http://127.0.0.1:5002/combine
+```
+Expected behavior:
+- Service B returns HTTP 503
+- Response indicates Service A is unavailable
+- Service B continues running normally
+- Failure is isolated and handled gracefully
+
 ## Screenshots of the Lab Results
 ### Case 1 Normal Operation
 ### Both Service A and Service B are on
@@ -122,6 +146,10 @@ Expected behavior:
 ### Case 3 Timeout/Slow Dependency
 ### (Both Service A on again)
 ![The result of Service B](5.png)
+
+### Case 4: Connection is Refused
+### (Service A is off)
+![The result of Service B](6.png)
 
 ## Failure Scenario Explanation
 This lab demonstrates how failure propagates across service boundaries in a distributed system using two independently running services.
@@ -145,3 +173,13 @@ This demonstrates:
 - Independent failure of Service A
 - Service B does not terminate or crash
 - Service B degrades gracefully and reports downstream unavailability
+
+### Failure Scenario 3: Connection Refused (HTTP 503)
+In this scenario, Service A is not running and no process is listening on its assigned port. When Service B attempts to establish a network connection to Service A, the operating system immediately refuses the connection. Service B catches the connection refusal error and returns HTTP 503 (Service Unavailable).
+
+This demonstrates:
+- Service A is unreachable at the network level
+- The connection is refused immediately rather than timing out
+- Service B continues running without crashing
+- Network-level failures are handled gracefully and isolated from the consumer service
+- Network-level failures are handled gracefully and isolated from the consumer service
