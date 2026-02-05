@@ -48,7 +48,7 @@ source venv/bin/activate (macOS)
 pip install flask requests
 python app.py
 ```
-Service A run on: http://127.0.0.1:5001
+Service A run on: http://127.0.0.1:5001 (The 8080 port is being used on my computer, so 5001 is used for this Lab.)
 
 Test Service A: curl http://127.0.0.1:5001/data
 
@@ -63,7 +63,7 @@ pip install flask requests
 python app.py
 ```
 
-Service B runs on: http://127.0.0.1:5002
+Service B runs on: http://127.0.0.1:5002 (The 8081 port is being used on my computer, so 5002 is used for this Lab.)
 
 Test Service B: curl http://127.0.0.1:5002/combine
 
@@ -153,6 +153,15 @@ Expected behavior:
 
 ## What makes this distributed?
 This system is distributed because it consists of two independent services (Service A and Service B) running as separate processes that communicate over the network using HTTP rather than direct function calls. Each service has its own port, runtime, and failure behavior, meaning they can start, stop, or fail independently. Service B depends on Service A through network requests and must handle timeouts or connection failures gracefully, demonstrating real-world distributed system characteristics such as network communication, partial failures, and service isolation.
+
+## What happens on timeout?
+If Service A is reachable but responds too slowly (e.g., calling /slow with timeout=1.0), Service B waits until the timeout expires, catches requests.exceptions.Timeout, logs a warning like “Service A timed out”, and returns HTTP 504 (Gateway Timeout) with a JSON body indicating a_status: "timeout".
+
+## What happens if Service A is down?
+If Service A is stopped (or nothing is listening on its port), Service B’s request fails immediately with requests.exceptions.ConnectionError (often “connection refused”). Service B logs “Service A unavailable (connection error)” and returns HTTP 503 (Service Unavailable) with a_status: "unavailable". Service B keeps running—only the dependency fails.
+
+## What do your logs show, and how would you debug?
+The logs show request flow (e.g., Request received: GET /combine) and the failure classification (timeout vs unavailable) along with the HTTP status returned (504 or 503). To debug: (1) confirm which endpoint B is calling (/data vs /slow), (2) check Service A’s terminal logs to see whether it received the request, (3) verify connectivity to A with curl http://127.0.0.1:<A-port>/health, and on Windows (4) confirm the port is actually listening or closed using netstat -ano | findstr :<A-port> and kill any leftover PID with taskkill /PID <PID> /F.
 
 ## Failure Scenario Explanation
 This lab demonstrates how failure propagates across service boundaries in a distributed system using two independently running services.
